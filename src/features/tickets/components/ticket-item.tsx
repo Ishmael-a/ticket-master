@@ -13,7 +13,7 @@ import { TICKET_ICONS } from "../constants";
 import { LucideMoreVertical, LucidePencil, LucideSquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
-import { Ticket } from "@prisma/client";
+import { Ticket } from "../../../../generated/prisma";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketMoreMenu } from "./ticket-more-menu";
 
