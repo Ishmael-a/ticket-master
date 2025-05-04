@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Ticket } from '@prisma/client'
+import { Ticket } from 'generated/prisma'
 import { upsertTicket } from "@/features/tickets/actions/upsert-ticket";
 import { SubmitButton } from '@/components/form/submit-button'
 import { useActionState, useRef } from "react"

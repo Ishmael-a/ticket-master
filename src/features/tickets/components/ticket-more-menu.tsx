@@ -1,6 +1,6 @@
 'use client'
 
-import { Ticket } from '@prisma/client'
+import { Ticket } from 'generated/prisma'
 import { LucideTrash } from 'lucide-react'
 import {
   DropdownMenu,
