@@ -13,17 +13,29 @@ import { TICKET_ICONS } from "../constants";
 import { LucideMoreVertical, LucidePencil, LucideSquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
-import { Ticket } from "../../../../generated/prisma";
+import { Prisma } from "generated/prisma";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketMoreMenu } from "./ticket-more-menu";
+import { isOwner } from "@/features/auth/utils/is-owner";
+import { getAuth } from "@/features/auth/actions/get-auth";
 
 
 interface TicketItemProps {
-  ticket: Ticket;
+  ticket: Prisma.TicketGetPayload<{
+    include: {
+      user: {
+        select: {
+          username: true;
+        }
+      }
+    }
+  }>;
   isDetail?: boolean;
 }
 
-const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail }) => {
+const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
+    const { user } = await getAuth();
+    const isTicketOwner = isOwner(user, ticket);
     const StatusIcon = TICKET_ICONS[ticket.status];
     const detailButton = (
       <Button variant={"outline"} asChild >
@@ -38,7 +50,7 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail }) => {
       </Button>
     );
 
-    const editButton = (
+    const editButton = isTicketOwner ?(
       <Button variant={"outline"} asChild >
         <Link
           prefetch
@@ -49,15 +61,15 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail }) => {
           <LucidePencil className="h-4 w-4" />
         </Link>
       </Button>
-    );
+    ) : null;
 
-    const moreMenu = (
+    const moreMenu = isTicketOwner ? (
       <TicketMoreMenu ticket={ticket} trigger={       
         <Button variant={"outline"} size={"icon"} className="w-full">
           <LucideMoreVertical />
         </Button>
       }/>
-    )
+    ) : null;
 
   return (
     <div
@@ -68,9 +80,9 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail }) => {
     >
       <Card className="w-full" key={ticket.id}>
         <CardHeader>
-          <CardTitle className="flex gap-x-2 items-center">
+          <CardTitle className="flex gap-x-2 items-center ">
             <StatusIcon size={20} />
-            <span className=" truncate">{ticket.title}</span>
+            <span className="truncate">{ticket.title}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -83,7 +95,7 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail }) => {
           </span>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">{ticket.deadline} by {ticket.user.username}</p>
           <p className="text-sm text-muted-foreground">
             {toCurrencyFromCent(ticket.bounty)}
           </p>

@@ -17,12 +17,12 @@ const Form = ({ action, children, actionState, onSuccess, onError }: FormProps) 
     onSuccess: ({actionState}) => {
       if( actionState.message ) toast.success(actionState.message)
 
-        onSuccess?.(actionState)
+      onSuccess?.(actionState)
     },
     onError: ({actionState}) => {
       if( actionState.message ) toast.error(actionState.message)
 
-        onError?.(actionState)
+      onError?.(actionState)
     }
   })
 

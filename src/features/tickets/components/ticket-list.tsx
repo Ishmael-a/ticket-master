@@ -2,10 +2,14 @@ import React from 'react'
 import { TicketItem } from "@/features/tickets/components/ticket-item";
 import { getTickets } from '../queries/get-tickets';
 
+interface TicketListProps{
+    userId?: string;
+}
 
-const TicketList = async () => {
 
-    const tickets = await getTickets();
+const TicketList = async ({ userId }: TicketListProps) => {
+
+    const tickets = await getTickets(userId);
 
 
   return (

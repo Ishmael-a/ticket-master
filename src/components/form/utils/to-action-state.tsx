@@ -50,11 +50,12 @@ export const fromErrorToActionState = (error: unknown, formData?: FormData): Act
 }
 
 
-export const toActionState = (message: string, status: ActionStateStatus): ActionState => {
+export const toActionState = (message: string, status: ActionStateStatus, formData?: FormData): ActionState => {
     return { 
         status, 
         message: message, 
         fieldErrors: {},
+        payload: formData,
         timestamp: Date.now()
     };
 }

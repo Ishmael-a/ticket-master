@@ -1,10 +1,22 @@
 import { TicketStatus } from "@/features/tickets/types";
-import { PrismaClient, Prisma } from "../generated/prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
+import { hash } from "@node-rs/argon2";
 
 
 const prisma = new PrismaClient();
 
-export const tickets: Prisma.TicketCreateManyInput[] = [
+const users = [
+  {
+    username: "admin",
+    email: "admin@admin.com"
+  },
+  {
+    username: "ishmael_a",
+    email: "abuishmaelyusif204@gmail.com"
+  }
+];
+
+export const tickets= [
   {
     title: "User Authentication Bug",
     content:
@@ -50,11 +62,30 @@ export const tickets: Prisma.TicketCreateManyInput[] = [
 // };
 
 const seed = async () => {
+    const t0 = performance.now()
   try {
-    await prisma.ticket.createMany({
-      data: tickets,
+
+    await prisma.user.deleteMany();
+    await prisma.ticket.deleteMany();
+
+    const passwordHash = await hash("secret");
+
+    const dbUsers = await prisma.user.createManyAndReturn({
+      data: users.map((user) => ({
+        ...user,
+        passwordHash
+      })),
     });
-    console.log("Seed data inserted successfully");
+
+    await prisma.ticket.createMany({
+      data: tickets.map((ticket) => ({
+        ...ticket,
+        userId: dbUsers[0].id,
+      })),
+    });
+
+    const t1 = performance.now();
+    console.log(`Seed data inserted successfully. Finished in (${t1-t0} ms)`);
   } catch (error) {
     console.error("Error seeding data:", error);
   } finally {

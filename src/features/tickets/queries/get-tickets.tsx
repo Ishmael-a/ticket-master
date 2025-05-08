@@ -1,12 +1,21 @@
 import { prisma } from "@/lib/prisma"
-import { Ticket } from "generated/prisma";
 import { cache } from "react";
 
-export const getTickets = cache(async () => {
+export const getTickets = cache(async (userId: string | undefined) => {
     try {
-        const allTickets: Ticket[] = await prisma.ticket.findMany({
+        const allTickets = await prisma.ticket.findMany({
+          where: {
+            userId: userId
+          },
           orderBy: {
             createdAt: "desc",
+          },
+          include: {
+            user: {
+              select: {
+                username: true
+              }
+            }
           },
         });
 

@@ -1,17 +1,23 @@
-import Link from "next/link";
-import { ticketsPath } from "@/app/paths";
+import { ErrorBoundary } from "react-error-boundary";
+import { Suspense } from "react";
+import { NotFound } from "@/components/not-found";
 import { Heading } from "@/components/heading";
+import TicketList from "@/features/tickets/components/ticket-list";
+import { Spinner } from "@/components/spinner";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex-1 flex flex-col gap-y-8">
-      <Heading title={"HomePage"} description={"This Is The Home Page"} />
+      <Heading
+        title={"All Tickets"}
+        description={"Tickets By Everyone At One Place"}
+      />
 
-      <div className="flex flex-col items-center">
-        <Link href={ticketsPath()} className="underline">
-          Go To The Tickets Page
-        </Link>
-      </div>
+      <ErrorBoundary fallback={<NotFound label="Something Went Wrong!" />}>
+        <Suspense fallback={<Spinner />}>
+          <TicketList />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }
