@@ -5,6 +5,7 @@
 
 
 @theme inline {
+  --sidebar-from-left: sidebar-from-left 0.5s ease-out;
   --fade-in-from-top: fade-in-from-top 0.5s ease-out;
   --header-from-top: header-from-top 0.5s ease-out;
   --color-background: var(--background);
@@ -68,12 +69,25 @@
       transform: translateY(0);
     }
   }
+  @keyframes sidebar-from-left {
+    from {
+      opacity: 0;
+      transform: translateX(-100px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 
   .animate-fade-in-from-top {
     animation: var(--fade-in-from-top);
   }
   .animate-header-from-top {
     animation: var(--header-from-top);
+  }
+  .animate-sidebar-from-left{
+    animation: var(--sidebar-from-left)
   }
 }
 

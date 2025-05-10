@@ -1,3 +1,6 @@
+import { homePath } from "@/app/paths";
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Separator } from "@/components/ui/separator";
 import { TicketItem } from "@/features/tickets/components/ticket-item";
 import { getTicket } from "@/features/tickets/queries/get-ticket";
 import { notFound } from "next/navigation";
@@ -19,11 +22,18 @@ type Params = Promise<{ ticketId: string }>
    }
 
    return (
-    <>
+    <div className="flex-1 flex flex-col gap-y-4">
+      <Breadcrumbs breadcrumbs={[
+        { title:"Tickets" , href: homePath() },
+        { title:ticket.title }
+      ]} />
+
+      <Separator />
+
      <div className="flex justify-center animate-fade-in-from-top">
        <TicketItem ticket={ticket} isDetail />
      </div>
-    </>
+    </div>
    );
  };
 

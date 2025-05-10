@@ -1,35 +1,22 @@
-'use client'
+"use client";
 
 import Link from "next/link";
-import { homePath, signInPath, signUpPath, ticketsPath } from "@/app/paths";
+import { homePath, signInPath, signUpPath } from "@/app/paths";
 import { buttonVariants } from "@/components/ui/button";
-import { LucideKanban, LucideLogOut } from "lucide-react";
-import { ThemeSwitcher } from "./theme/theme-switcher";
-import { SubmitButton } from "./form/submit-button";
-import { signOut } from "@/features/auth/actions/sign-out";
+import { LucideKanban } from "lucide-react";
+import { ThemeSwitcher } from "../../components/theme/theme-switcher";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-
+import { AccountDropdown } from "./account-dropdown";
 
 const Navbar = () => {
   const { user, isFetched } = useAuth();
 
-  if(!isFetched){
+  if (!isFetched) {
     return null;
   }
 
   const navItems = user ? (
-    <>
-      <Link
-        href={ticketsPath()}
-        className={buttonVariants({ variant: "default" })}
-      >
-        Tickets
-      </Link>
-
-      <form action={signOut}>
-        <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
-      </form>
-    </>
+    <AccountDropdown user={user} />
   ) : (
     <>
       <Link

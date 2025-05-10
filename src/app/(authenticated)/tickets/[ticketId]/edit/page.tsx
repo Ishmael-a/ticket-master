@@ -1,4 +1,7 @@
+import { homePath, ticketPath } from '@/app/paths';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 import { CardCompact } from '@/components/card-compact'
+import { Separator } from '@/components/ui/separator';
 import { getAuth } from '@/features/auth/actions/get-auth';
 import { isOwner } from '@/features/auth/utils/is-owner';
 import { TicketUpsertForm } from '@/features/tickets/components/ticket-upsert-form';
@@ -23,13 +26,24 @@ const TicketEditPage = async ({ params }: { params: Params }) => {
    }
 
   return (
-    <div className='flex-1 flex flex-col items-center justify-center'>
-      <CardCompact
-        title="Edit Ticket"
-        description="Edit an existing ticket"
-        className="w-full max-w-[420px] animate-fade-in-from-top"
-        content={<TicketUpsertForm ticket={ticket} />}
-      />
+    <div className="flex-1 flex flex-col gap-y-4">
+      <Breadcrumbs breadcrumbs={[
+        { title:"Tickets" , href: homePath() },
+        { title:ticket.title, href: ticketPath(ticket.id) },
+        { title: "Edit" }
+      ]} />
+
+      <Separator />
+
+      <div className='flex-1 flex flex-col items-center justify-center'>
+        <CardCompact
+          title="Edit Ticket"
+          description="Edit an existing ticket"
+          className="w-full max-w-[420px] animate-fade-in-from-top"
+          content={<TicketUpsertForm ticket={ticket} />}
+        />
+      </div>
+
     </div>
   );
 };
