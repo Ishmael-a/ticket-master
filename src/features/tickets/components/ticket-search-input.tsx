@@ -3,7 +3,6 @@
 import { SearchInput } from '@/components/search-input'
 import { useQueryState } from "nuqs";
 import { searchParser } from "@/features/tickets/search-input";
-import React from 'react'
 
 interface TicketSearchInputProps{
     placeholder: string

@@ -80,8 +80,8 @@ const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
     >
       <Card className="w-full" key={ticket.id}>
         <CardHeader>
-          <CardTitle className="flex gap-x-2 items-center ">
-            <StatusIcon size={20} />
+          <CardTitle className="flex gap-x-2 items-center min-w-0">
+            <StatusIcon size={20} className="flex-shrink-0" />
             <span className="truncate">{ticket.title}</span>
           </CardTitle>
         </CardHeader>
@@ -95,7 +95,9 @@ const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
           </span>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">{ticket.deadline} by {ticket.user.username}</p>
+          <p className="text-sm text-muted-foreground">
+            {ticket.deadline} by {ticket.user.username}
+          </p>
           <p className="text-sm text-muted-foreground">
             {toCurrencyFromCent(ticket.bounty)}
           </p>
