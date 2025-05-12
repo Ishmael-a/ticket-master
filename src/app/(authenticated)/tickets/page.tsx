@@ -7,7 +7,7 @@ import { NotFound } from "@/components/not-found";
 import { CardCompact } from "@/components/card-compact";
 import { TicketUpsertForm } from "@/features/tickets/components/ticket-upsert-form";
 import { getAuth } from "@/features/auth/actions/get-auth";
-import { ParsedSearchParams, searchParamsCache } from "@/features/tickets/search-input";
+import { searchParamsCache } from "@/features/tickets/search-input";
 
 
 // export const dynamic = "force-dynamic";
@@ -16,7 +16,13 @@ import { ParsedSearchParams, searchParamsCache } from "@/features/tickets/search
 // export const revalidate = 30;
 
 interface TicketsPageProps {
-  searchParams: Promise<ParsedSearchParams>;
+  searchParams: Promise<{
+    page: string;
+    size: string;
+    sortKey: string;
+    sortValue: string;
+    search: string;
+  }>;
 }
 
 const TicketsPage = async ({ searchParams }: TicketsPageProps) => {
