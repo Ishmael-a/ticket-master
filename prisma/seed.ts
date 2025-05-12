@@ -49,6 +49,17 @@ export const tickets= [
   },
 ];
 
+
+export const comments = [
+  { content: "The login page fails to load on Safari browsers." },
+  { content: "Payment gateway timeout error occurs after 3 retries." },
+  { content: "User profile images aren't displaying in dark mode." },
+  { content: "API returns 500 error when filtering by date range." },
+  { content: "Mobile menu overlaps content on iPhone 12 mini." },
+  { content: "Forgot password email arrives with 5-minute delay." }
+];
+
+
 // const seed = async () => {
 //     // for(const ticket of tickets){
 //     //     await prisma.ticket.create({
@@ -65,6 +76,7 @@ const seed = async () => {
     const t0 = performance.now()
   try {
 
+    await prisma.comment.deleteMany();
     await prisma.user.deleteMany();
     await prisma.ticket.deleteMany();
 
@@ -77,10 +89,18 @@ const seed = async () => {
       })),
     });
 
-    await prisma.ticket.createMany({
+    const dbTickets = await prisma.ticket.createManyAndReturn({
       data: tickets.map((ticket) => ({
         ...ticket,
         userId: dbUsers[0].id,
+      })),
+    });
+
+    await prisma.comment.createMany({
+      data: comments.map((comment) => ({
+        ...comment,
+        userId: dbUsers[0].id,
+        ticketId: dbTickets[0].id
       })),
     });
 

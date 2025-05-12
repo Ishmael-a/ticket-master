@@ -4,33 +4,56 @@ import { ParsedSearchParams } from "../search-input";
 
 
 export const getTickets = cache(async (userId: string | undefined, searchParams: ParsedSearchParams) => {
-    try {
-        const allTickets = await prisma.ticket.findMany({
-          where: {
-            userId: userId,
-              title: {
-                contains: searchParams.search,
-                mode: "insensitive",
-              }
-          },
-          orderBy: {
-            // // createdAt: "desc",
-            // ...(searchParams.sort === "newest" && { createdAt : "desc" }),
-            // ...(searchParams.sort === "bounty" && { bounty : "desc" }),
-            [searchParams.sortKey]:  searchParams.sortValue,
-          },
-          include: {
-            user: {
-              select: {
-                username: true
-              }
-            }
-          },
-        });
+    const where = {
+      userId: userId,
+        title: {
+          contains: searchParams.search,
+          mode: "insensitive" as const,
+        }
+    }
 
-        return allTickets;
+    const take = searchParams.size;
+    const skip = searchParams.page * searchParams.size;
+
+
+    try {
+
+        const [allTickets, count] = await prisma.$transaction([
+          prisma.ticket.findMany({
+            where,
+            take,
+            skip,
+            orderBy: {
+              [searchParams.sortKey]: searchParams.sortValue,
+            },
+            include: {
+              user: {
+                select: {
+                  username: true,
+                },
+              },
+            },
+          }),
+          prisma.ticket.count({
+            where,
+          }),
+        ]);
+
+        return {
+          list: allTickets,
+          metadata: {
+            count : count,
+            hasNextPage: count > skip + take,
+          }
+        };
     }catch(error){
         console.error("Failed to fetch tickets:", error);
-        return [];
+        return {
+          list: [],
+          metadata: {
+            count: 0,
+            hasNextPage: false,
+          },
+        };
     }
 })

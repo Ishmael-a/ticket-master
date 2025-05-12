@@ -3,6 +3,7 @@ import { TicketItem } from "@/features/tickets/components/ticket-item";
 import { getTickets } from '../queries/get-tickets';
 import { ParsedSearchParams } from '../search-input';
 import { NotFound } from '@/components/not-found';
+import TicketPagination from "./ticket-pagination";
 import TicketSearchInput from './ticket-search-input';
 import TicketSortSelect from './ticket-sort-select';
 
@@ -14,7 +15,7 @@ interface TicketListProps{
 
 const TicketList = async ({ userId, searchParams }: TicketListProps) => {
 
-    const tickets = await getTickets(userId, searchParams);
+    const { list: tickets, metadata: ticketsMetadata } = await getTickets(userId, searchParams);
 
 
   return (
@@ -33,6 +34,7 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
                 ]}
             />
         </div>
+
         {tickets.length === 0 ? (
             <NotFound label='No tickets found'/>
         ) : (
@@ -42,6 +44,11 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
                 ))}
             </>
         )}
+
+        <div className=' w-full max-w-[420px] '>
+            <TicketPagination paginatedTicketMetadata={ticketsMetadata} /> 
+        </div>
+
     </div>
   )
 }
