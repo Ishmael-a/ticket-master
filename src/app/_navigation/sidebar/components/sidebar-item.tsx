@@ -45,7 +45,7 @@ const SidebarItem = ({ isOpen, isActive,  navItem }: SidebarItemProps) => {
             ? buttonVariants({ variant: "default" })
             : buttonVariants({ variant: "ghost" }),
           "md:hidden group flex flex-col h-14 items-center justify-center",
-          isActive ? "bg-muted font-bold" : "text-muted-foreground"
+          isActive ? "bg-muted text-primary font-bold" : "text-muted-foreground"
         )}
       >
         {cloneElement(navItem.icon, {

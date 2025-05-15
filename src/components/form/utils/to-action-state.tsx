@@ -6,10 +6,12 @@ export const enum ActionStateStatus {
     ERROR= "ERROR"
 } 
 
-export type ActionState = { 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ActionState<T = any> = { 
     status? : ActionStateStatus;
     message : string;
     payload?: FormData;
+    data?: T;
     fieldErrors?: Record<string, string[]|undefined>;
     timestamp: number
 }
@@ -50,12 +52,13 @@ export const fromErrorToActionState = (error: unknown, formData?: FormData): Act
 }
 
 
-export const toActionState = (message: string, status: ActionStateStatus, formData?: FormData): ActionState => {
+export const toActionState = (message: string, status: ActionStateStatus, formData?: FormData, data?: unknown): ActionState => {
     return { 
         status, 
         message: message, 
         fieldErrors: {},
         payload: formData,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        data
     };
 }

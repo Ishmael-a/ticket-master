@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { RedirectToast } from "@/components/redirect-toast";
 import { Sidebar } from "@/app/_navigation/sidebar/components/sidebar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ReactQueryProvider } from "@/app/_providers/react-query/react-query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
+          <ReactQueryProvider>
           <NuqsAdapter>
           <Navbar />
           <div className="flex h-screen overflow-hidden border-collapse">
@@ -52,6 +54,7 @@ export default function RootLayout({
           <RedirectToast />
           <Toaster expand />
           </NuqsAdapter>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

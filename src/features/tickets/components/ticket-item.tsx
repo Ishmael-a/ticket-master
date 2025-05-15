@@ -1,3 +1,4 @@
+'use client' 
 
 import React from "react";
 import {
@@ -13,30 +14,20 @@ import { TICKET_ICONS } from "../constants";
 import { LucideMoreVertical, LucidePencil, LucideSquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
-import { Prisma } from "generated/prisma";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketMoreMenu } from "./ticket-more-menu";
-import { isOwner } from "@/features/auth/utils/is-owner";
-import { getAuth } from "@/features/auth/actions/get-auth";
-import { Comments } from "@/features/comments/components/comments";
+import { TicketWithMetadata } from "../types";
 
 
 interface TicketItemProps {
-  ticket: Prisma.TicketGetPayload<{
-    include: {
-      user: {
-        select: {
-          username: true;
-        }
-      }
-    }
-  }>;
+  ticket: TicketWithMetadata;
   isDetail?: boolean;
+  comments?: React.ReactNode;
 }
 
-const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
-    const { user } = await getAuth();
-    const isTicketOwner = isOwner(user, ticket);
+const TicketItem: React.FC<TicketItemProps> = ({ ticket, isDetail, comments }) => {
+    // const { user } = await getAuth();
+    // const isTicketOwner = isOwner(user, ticket);
     const StatusIcon = TICKET_ICONS[ticket.status];
     const detailButton = (
       <Button variant={"outline"} asChild >
@@ -51,7 +42,7 @@ const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
       </Button>
     );
 
-    const editButton = isTicketOwner ?(
+    const editButton = ticket.isOwner ?(
       <Button variant={"outline"} asChild >
         <Link
           prefetch
@@ -64,7 +55,7 @@ const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
       </Button>
     ) : null;
 
-    const moreMenu = isTicketOwner ? (
+    const moreMenu = ticket.isOwner ? (
       <TicketMoreMenu ticket={ticket} trigger={       
         <Button variant={"outline"} size={"icon"} className="w-full">
           <LucideMoreVertical />
@@ -118,7 +109,12 @@ const TicketItem: React.FC<TicketItemProps> = async ({ ticket, isDetail }) => {
           )}
         </div>
       </div>
-      { isDetail ? <Comments ticketId={ticket.id} /> : null }
+
+      {/* using the client server composition pattern, i want to make ticketItem a server component */}
+      {/* { isDetail ? 
+          <Comments ticketId={ticket.id} comments={comments} /> 
+      : null } */}
+      { comments }
     </div>
   );
 };
