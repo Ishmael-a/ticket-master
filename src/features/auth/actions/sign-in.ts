@@ -4,10 +4,11 @@ import { homePath } from '@/app/paths';
 import { fromErrorToActionState, ActionState, ActionStateStatus, toActionState } from '@/components/form/utils/to-action-state';
 import { redirect } from 'next/navigation';
 import { prisma } from "@/lib/prisma";
-import { lucia } from '@/lib/lucia';
-import { cookies } from "next/headers";
-import { verify } from "@node-rs/argon2";
+import { createSession } from '@/lib/lucia';
 import { z } from 'zod';
+import { verifyPasswordHash } from '@/features/password/utils/hash-and-verify';
+import { generateSessionToken } from '@/utils/crypto';
+import { setSessionCookie } from '../utils/session-cookie';
 
 const signupSchema = z.object({
     email: z
@@ -34,23 +35,30 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
             return toActionState("Incorrect Email or Password", ActionStateStatus.ERROR, formData);
         }
 
-        const validPassword = await verify(user.passwordHash, password)
+        const validPassword = await verifyPasswordHash(
+          user.passwordHash,
+          password
+        );
 
         if(!validPassword){
             return toActionState("Incorrect Email or Password", ActionStateStatus.ERROR, formData);
         }
 
-        const session = await lucia.createSession(user.id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
 
-        const cookieStore = await cookies();
+        // const session = await lucia.createSession(user.id, {});
+        // const sessionCookie = lucia.createSessionCookie(session.id);
+        const sessionToken = generateSessionToken();
+        const session = await createSession(sessionToken, user.id);
 
-        cookieStore.set(
-            sessionCookie.name,
-            sessionCookie.value,
-            sessionCookie.attributes,
-        )
+        // const cookieStore = await cookies();
 
+        // cookieStore.set(
+        //     sessionCookie.name,
+        //     sessionCookie.value,
+        //     sessionCookie.attributes,
+        // )
+
+        await setSessionCookie(sessionToken, session.expiresAt);
     
     }catch(error){
 

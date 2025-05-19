@@ -1,4 +1,4 @@
-import { User as AuthUser } from "lucia";
+import { User as AuthUser } from "generated/prisma";
 import { signOut } from "@/features/auth/actions/sign-out";
 import { LucideLock, LucideLogOut, LucideUser } from "lucide-react";
 import {

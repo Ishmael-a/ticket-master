@@ -40,10 +40,9 @@ const SignUpForm = ()  => {
         />
         <FieldError actionState={actionState} name="password" />
 
-        <Input
+        <PasswordInput
           name={"confirmPassword"}
           placeholder={"Confirm Password"}
-          type={"password"}
           defaultValue={actionState.payload?.get("confirmPassword") as string}
         />
         <FieldError actionState={actionState} name="confirmPassword" />

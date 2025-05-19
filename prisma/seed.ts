@@ -8,11 +8,13 @@ const prisma = new PrismaClient();
 const users = [
   {
     username: "admin",
-    email: "admin@admin.com"
+    email: "admin@admin.com",
+    emailVerified: true,
   },
   {
     username: "ishmael_a",
-    email: "abuishmaelyusif204@gmail.com"
+    email: "abuishmaelyusif204@gmail.com",
+    emailVerified: false,
   }
 ];
 

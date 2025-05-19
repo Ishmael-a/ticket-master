@@ -1,14 +1,16 @@
 'use server'
 
 import { fromErrorToActionState, ActionState, ActionStateStatus, toActionState } from '@/components/form/utils/to-action-state';
-import { lucia } from '@/lib/lucia';
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { hash } from "@node-rs/argon2";
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { homePath } from '@/app/paths';
 import { Prisma } from 'generated/prisma';
+import { hashPassword } from '@/features/password/utils/hash-and-verify';
+import { createSession } from '@/lib/lucia';
+import { generateSessionToken } from '@/utils/crypto';
+import { setSessionCookie } from '../utils/session-cookie';
+import { inngest } from '@/lib/inngest';
 
 const signupSchema = z.object({
     username: z
@@ -39,7 +41,7 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
     try{
         const { username, email, password } = signupSchema.parse(Object.fromEntries(formData))
 
-        const hashedPassword = await hash(password);
+        const hashedPassword = await hashPassword(password);
 
         const newUser = await prisma.user.create({
             data: {
@@ -49,16 +51,18 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
             },
         })
 
-        const session = await lucia.createSession(newUser.id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
+        await inngest.send({
+            name: "app/auth.verify-email",
+            data: {
+                userId: newUser.id
+            }
+        })
 
-        const cookieStore = await cookies();
+        const sessionToken = generateSessionToken();
+        const session = await createSession(sessionToken, newUser.id);
 
-        cookieStore.set(
-            sessionCookie.name,
-            sessionCookie.value,
-            sessionCookie.attributes,
-        )
+
+        await setSessionCookie(sessionToken, session.expiresAt);
     
     }catch(error){
         if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002"){

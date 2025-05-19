@@ -1,6 +1,6 @@
 import { getAuth } from "@/features/auth/actions/get-auth";
 import { useEffect, useState } from "react";
-import { User as AuthUser } from "lucia";
+import { User as AuthUser } from "generated/prisma";
 import { usePathname } from "next/navigation";
 
 const useAuth = () => {
@@ -20,7 +20,7 @@ const useAuth = () => {
     fetchUser();
   }, [pathname]);
 
-return { user, isFetched }
+  return { user, isFetched }
 }
 
 export { useAuth }
