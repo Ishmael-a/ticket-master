@@ -16,6 +16,31 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
+model Organization{
+  id         String @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  memberships     Membership[]
+}
+
+model Membership{
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    String
+
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+
+  joinedAt  DateTime   @default(now())
+  isActive  Boolean
+
+  @@id(name: "membershipId", [organizationId, userId])
+  @@index([userId])
+  @@index([organizationId])
+
+}
+
 model User{
   id            String    @id @default(cuid())
   username      String    @unique
@@ -25,6 +50,7 @@ model User{
   sessions      Session[]
   passwordResetTokens PasswordResetToken[]
   emailverificationTokens EmailVerificationToken[]
+  memberships     Membership[]
   tickets       Ticket[]
   comments      Comment[]
 }
@@ -55,6 +81,7 @@ model PasswordResetToken{
   expiresAt  DateTime 
   userId     String  
   user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
 
   @@index([userId])
 }

@@ -29,17 +29,9 @@ const SubmitButton = ({ label, icon, variant, size }: SubmitButtonProps) => {
 
     return (
     <Button disabled={pending} type="submit" variant={variant} size={size}> 
-        {pending && (
-            <LucideLoaderCircle className={clsx(
-                'h-4 w-4 animate-spin',
-                {
-                '': !!label,
-                })
-            }/>
-        )}
-        {label}
-        {
-            pending ? null : icon ? 
+        {pending ? (
+            <LucideLoaderCircle className={'h-4 w-4 animate-spin'}/>
+        ) :  icon ? 
             <span className={clsx({
                 '': !!label,
             })}>
@@ -47,8 +39,8 @@ const SubmitButton = ({ label, icon, variant, size }: SubmitButtonProps) => {
                     className: "w-4 h-4"
                 })}
             </span> 
-            : null
-        } 
+        : null}
+        {label}
     </Button>
     )
 }
